@@ -1,4 +1,5 @@
 addpath('functions')
+
 % constants ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 gammaInner = 0;
 gammaInnerDesired = 0;
@@ -37,4 +38,28 @@ ue = [capOmega - capOmegaDesired;
       gammaInner - gammaInnerDesired;
       0];
 
-MTQ = getMTQ(N2Sharp, B2Bar, B1Bar, N1, WBar, ue)
+MTQ = getMTQ(N2Sharp, B2Bar, B1Bar, N1, WBar, ue);
+
+
+C = eye(3, 3);
+q = [0; 0; 0; 1];
+
+getMRPsFromC(C)
+getMRPsFromQ(q)
+
+function [MRPs] = getMRPsFromC(C)
+
+    phi = acos((trace(C) - 1) / 2);
+    a1 = (C(2, 3) - C(3, 2)) / (2*sin(phi));
+    a2 = (C(3, 1) - C(1, 3)) / (2*sin(phi));
+    a3 = (C(1, 2) - C(2, 1)) / (2*sin(phi));
+    
+    MRPs = tan(phi/4) * [a1; a2; a3];
+end
+
+
+function [MRPs] = getMRPsFromQ(q)
+    MRPs = q(1:3) / (1 + q(4));
+end
+
+
