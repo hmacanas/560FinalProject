@@ -57,7 +57,7 @@ WBar = [b1 0 0; 0 b2 0; 0 0 0];
 [UDGV] = getUDGV(N1Sharp, uPrime, WBar, ue, B1Bar, B2Bar, N2, MTQ);
 
 
-xdot = A*[we;se] + Be*uprime + E*w;
+xdot = A*[we;se] + Be*uPrime;
 
 xdot = [xdot;UDGV];
 end

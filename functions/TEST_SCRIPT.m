@@ -33,6 +33,15 @@ kp = 2*J*wn^2;
 x0 = [we0;MRP0;DVG0];
 
 [t, state] = ode45(@DGVSCMG, [0 100], x0, options, J, Iws, kp, kd);
+
+%% PLOTTER
+figure(1)
+plot(t,state(:,4))
+hold on
+grid on
+plot(t,state(:,5))
+plot(t,state(:,6));
+
 %% FUNCTIONS
 function [MRP] = MRPfromQ(q)
 q1 = [q(1);q(2);q(3)];
