@@ -1,6 +1,6 @@
 function [xdot] = DGVSCMG(t,x,J,Iws,kp,kd)
 % DECOMPOSE STATE VECTOR
-mu = 7.9E12;
+mu = 7.9E15;
 a = 7359.42;
 inc = deg2rad(53);
 n = 0.001;
@@ -19,6 +19,7 @@ d_o   = x(9); % [rad] outer gimbal angle
 %% CALCULATIONS
 % Calculate Uprime
 uPrime = -[kd, zeros(3); zeros(3), kp]*state;
+uPrime = 50*kd*we;
 % Calculate ue
 ue = [Omega-300; d_i; 0];
 
@@ -31,13 +32,15 @@ M = [col1,col2,col3];
 % A Matrix
 H = [(1 - se'*se)*eye(3) + 2*ax(se) + 2*(se*se')];
 A = J^-1*Iws*M;
-A = [A zeros(3); 0.25*H zeros(3)];
+A = [A zeros(3); 0.25*H -kp];
 
 % B Matrices
 [B1Bar] = getB1Bar(J, Iws);
 [B2Bar] = getB2Bar(J, mu, a);
 Be = [B1Bar; zeros(3)];
 
+[K,S,e] = lqr(A,Be,[kd,zeros(3);zeros(3),kp],eye(3));
+uPrime = -K*state;
 % E Matrix
 
 % Calculate N Matrices
@@ -57,10 +60,9 @@ b1 = 1;
 b2 = 0.1;
 WBar = [b1 0 0; 0 b2 0; 0 0 0];
 [MTQ] = getMTQ(N2Sharp, B2Bar, B1Bar, N1, WBar, ue);
-uPrime = uPrime(1:3);
 [UDGV] = getUDGV(N1Sharp, uPrime, WBar, ue, B1Bar, B2Bar, N2, MTQ);
 
-
-xdot = A*[we;se] + Be*uPrime*0;
+E = [diag([2.1 5.5 1.7])*10^-5;zeros(3)];
+xdot = A*[we;se] + Be*uPrime + E*we;
 xdot = [xdot;UDGV];
 end

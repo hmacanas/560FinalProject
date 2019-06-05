@@ -13,7 +13,7 @@ options = odeset('RelTol',1e-7,'AbsTol',1e-7);
 % MRPs = ShadowfromMRP(MRP);
 
 % Angular velocity error at t0
-we0 = [0.001;0.01;0.005]; % [rad/s]
+we0 = [0.1;0.1;0.1]; % [rad/s]
 MRP0 = [0.414; 0.3; 0.2];
 DVG0 = [250;0;0];
 
@@ -32,7 +32,15 @@ kp = 2*J*wn^2;
 %% INTEGRATION
 x0 = [we0;MRP0;DVG0];
 
-[t, state] = ode45(@DGVSCMG, [0 3600], x0, options, J, Iws, kp, kd);
+[t, state] = ode45(@DGVSCMG, [0 200], x0, options, J, Iws, kp, kd);
+
+
+%% SIMPLE INTEGRATION
+% se = MRP0;
+% H = [(1 - se'*se)*eye(3) + 2*ax(se) + 2*(se*se')];
+% zeta0 = H^-1*(se);
+% x0 = [we0;zeta0;DVG0];
+% [t, state] = ode45(@DGVSCMG_simple, [0 300], x0, options, J, Iws, kp, kd);
 
 %% PLOTTER
 figure(1)
@@ -57,6 +65,11 @@ hold on
 grid on
 plot(t,state(:,9))
 %plot(t,state(:,9));
+
+figure(4)
+plot(t,state(:,7))
+grid on
+title('Wheel Speed [rad/s]');
 %% FUNCTIONS
 function [MRP] = MRPfromQ(q)
 q1 = [q(1);q(2);q(3)];
