@@ -7,14 +7,14 @@ options = odeset('RelTol',1e-7,'AbsTol',1e-7);
 
 % Random C0
 %C0 = c_x(deg2rad(10))*c_y(deg2rad(5))*c_z(deg2rad(-10));
-C0 = [0.5 -0.8536 0.1464; 0.5 0.1464 -0.8536; 0.7071 0.5 0.5];
-q = quaternion(C0);
-MRP = MRPfromQ(q);
-MRPs = ShadowfromMRP(MRP);
+% C0 = [0.5 -0.8536 0.1464; 0.5 0.1464 -0.8536; 0.7071 0.5 0.5];
+% q = [-0.5; 0.5; -0.5; 0.5];
+% MRP = MRPfromQ(q);
+% MRPs = ShadowfromMRP(MRP);
 
 % Angular velocity error at t0
-we0 = [0;0;0]; % [rad/s]
-MRP0 = MRP;
+we0 = [0.001;0.01;0.005]; % [rad/s]
+MRP0 = [0.414; 0.3; 0.2];
 DVG0 = [250;0;0];
 
 % Control Requirements
@@ -32,16 +32,31 @@ kp = 2*J*wn^2;
 %% INTEGRATION
 x0 = [we0;MRP0;DVG0];
 
-[t, state] = ode45(@DGVSCMG, [0 100], x0, options, J, Iws, kp, kd);
+[t, state] = ode45(@DGVSCMG, [0 3600], x0, options, J, Iws, kp, kd);
 
 %% PLOTTER
 figure(1)
 plot(t,state(:,4))
+title('MRP_e');
 hold on
 grid on
 plot(t,state(:,5))
 plot(t,state(:,6));
 
+figure(2)
+plot(t,state(:,1))
+title('W_e')
+hold on
+grid on
+plot(t,state(:,2))
+plot(t,state(:,3));
+
+figure(3)
+plot(t,state(:,8))
+hold on
+grid on
+plot(t,state(:,9))
+%plot(t,state(:,9));
 %% FUNCTIONS
 function [MRP] = MRPfromQ(q)
 q1 = [q(1);q(2);q(3)];

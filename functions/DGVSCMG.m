@@ -9,6 +9,7 @@ n = 0.001;
 we = [x(1);x(2);x(3)]; % [rad/s] angular velocity error
 se = [x(4);x(5);x(6)]; % MRP Error
 state = [we;se];
+
 % CMG
 Omega = x(7); % [rad/s] wheel speed
 d_i   = x(8); % [rad] inner gimbal angle
@@ -17,13 +18,15 @@ d_o   = x(9); % [rad] outer gimbal angle
 
 %% CALCULATIONS
 % Calculate Uprime
-uPrime = -[kd zeros(3); zeros(3) kp]*state;
+uPrime = -[kd, zeros(3); zeros(3), kp]*state;
 % Calculate ue
 ue = [Omega-300; d_i; 0];
 
 % CALCUATE COEFFICIENT MATRICES
-rho = [Omega*cos(d_i)*cos(d_o); Omega*cos(d_i)*sin(d_o); Omega*sin(d_i)];  
-M = -ax(rho);
+col1 = [0; -Omega*sin(d_i); -Omega*cos(d_i)*cos(d_o)];
+col2 = [Omega*sin(d_i); 0; Omega*cos(d_i)*cos(d_o)];
+col3 = [Omega*cos(d_i)*cos(d_o); -Omega*cos(d_i)*cos(d_o); 0];
+M = [col1,col2,col3];
 
 % A Matrix
 H = [(1 - se'*se)*eye(3) + 2*ax(se) + 2*(se*se')];
@@ -33,7 +36,7 @@ A = [A zeros(3); 0.25*H zeros(3)];
 % B Matrices
 [B1Bar] = getB1Bar(J, Iws);
 [B2Bar] = getB2Bar(J, mu, a);
-Be = [B1Bar;zeros(3)];
+Be = [B1Bar; zeros(3)];
 
 % E Matrix
 
@@ -54,10 +57,10 @@ b1 = 1;
 b2 = 0.1;
 WBar = [b1 0 0; 0 b2 0; 0 0 0];
 [MTQ] = getMTQ(N2Sharp, B2Bar, B1Bar, N1, WBar, ue);
+uPrime = uPrime(1:3);
 [UDGV] = getUDGV(N1Sharp, uPrime, WBar, ue, B1Bar, B2Bar, N2, MTQ);
 
 
-xdot = A*[we;se] + Be*uPrime;
-
+xdot = A*[we;se] + Be*uPrime*0;
 xdot = [xdot;UDGV];
 end
