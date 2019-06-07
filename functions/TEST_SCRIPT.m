@@ -13,7 +13,7 @@ options = odeset('RelTol',1e-7,'AbsTol',1e-7);
 % MRPs = ShadowfromMRP(MRP);
 
 % Angular velocity error at t0
-we0 = [0.1;0.1;0.1]; % [rad/s]
+we0 = [0;0;0]; % [rad/s]
 MRP0 = [0.414; 0.3; 0.2];
 DVG0 = [250;0;0];
 
@@ -44,6 +44,7 @@ x0 = [we0;MRP0;DVG0];
 
 %% PLOTTER
 figure(1)
+subplot(2,2,1)
 plot(t,state(:,4))
 title('MRP_e');
 hold on
@@ -51,7 +52,7 @@ grid on
 plot(t,state(:,5))
 plot(t,state(:,6));
 
-figure(2)
+subplot(2,2,2)
 plot(t,state(:,1))
 title('W_e')
 hold on
@@ -59,14 +60,15 @@ grid on
 plot(t,state(:,2))
 plot(t,state(:,3));
 
-figure(3)
+subplot(2,2,3)
 plot(t,state(:,8))
 hold on
 grid on
 plot(t,state(:,9))
+title('Gimbal Angles');
 %plot(t,state(:,9));
 
-figure(4)
+subplot(2,2,4)
 plot(t,state(:,7))
 grid on
 title('Wheel Speed [rad/s]');

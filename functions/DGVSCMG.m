@@ -19,7 +19,7 @@ d_o   = x(9); % [rad] outer gimbal angle
 %% CALCULATIONS
 % Calculate Uprime
 uPrime = -[kd, zeros(3); zeros(3), kp]*state;
-uPrime = 50*kd*we;
+uPrime = 200*[kd,kp]*state;
 % Calculate ue
 ue = [Omega-300; d_i; 0];
 
@@ -32,15 +32,15 @@ M = [col1,col2,col3];
 % A Matrix
 H = [(1 - se'*se)*eye(3) + 2*ax(se) + 2*(se*se')];
 A = J^-1*Iws*M;
-A = [A zeros(3); 0.25*H -kp];
+A = [A zeros(3); 0.25*H zeros(3)];
 
 % B Matrices
 [B1Bar] = getB1Bar(J, Iws);
 [B2Bar] = getB2Bar(J, mu, a);
 Be = [B1Bar; zeros(3)];
 
-[K,S,e] = lqr(A,Be,[kd,zeros(3);zeros(3),kp],eye(3));
-uPrime = -K*state;
+% [K,S,e] = lqr(A,Be,eye(6),eye(3));
+% uPrime = -K*state;
 % E Matrix
 
 % Calculate N Matrices
