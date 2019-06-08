@@ -15,7 +15,7 @@ options = odeset('RelTol',1e-7,'AbsTol',1e-7);
 % Angular velocity error at t0
 we0 = [0;0;0]; % [rad/s]
 MRP0 = [0.252; 0; -0.092];
-MRP0 = [0.414; 0.3; 0.2];
+%MRP0 = [0.414; 0.3; 0.2];
 DVG0 = [250;0;0];
 
 % Control Requirements
