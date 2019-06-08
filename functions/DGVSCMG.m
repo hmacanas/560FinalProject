@@ -18,7 +18,6 @@ d_o   = x(9); % [rad] outer gimbal angle
 
 %% CALCULATIONS
 % Calculate Uprime
-uPrime = -[kd, zeros(3); zeros(3), kp]*state;
 uPrime = 200*[kd,kp]*state;
 % Calculate ue
 ue = [Omega-300; d_i; 0];
@@ -46,7 +45,7 @@ Be = [B1Bar; zeros(3)];
 % Calculate N Matrices
 [N1] = getN1(d_i, d_o, Omega);
 [N2] = getN2(t, inc, n);
-
+outputFunc(det(N1),t);
 % Calculate N# matrices
 k1 = 10;
 k1Prime = 0.001;
@@ -61,8 +60,14 @@ b2 = 0.1;
 WBar = [b1 0 0; 0 b2 0; 0 0 0];
 [MTQ] = getMTQ(N2Sharp, B2Bar, B1Bar, N1, WBar, ue);
 [UDGV] = getUDGV(N1Sharp, uPrime, WBar, ue, B1Bar, B2Bar, N2, MTQ);
+%[UDGV] = N1^-1*uPrime;
 
 E = [diag([2.1 5.5 1.7])*10^-5;zeros(3)];
 xdot = A*[we;se] + Be*uPrime + E*we;
 xdot = [xdot;UDGV];
 end
+function [] = outputFunc(d,t)
+global det
+det = [det,[d;t]];
+end
+
